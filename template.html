@@ -78,12 +78,14 @@
         padding: 30px 50px;
         max-width: 365px;
         min-width: 120px;
+        visibility: hidden;
       }
 
       .emoji {
         height: 22px;
         position: relative;
-        bottom: -4px;
+        bottom: -5px;
+        z-index: 5;
       }
     </style>
   </head>
@@ -92,7 +94,7 @@
   <body>
     <div class="placeholder">
       <span>
-        {{message}}
+        {{{message}}}
       </span>
     </div>
 
@@ -111,7 +113,7 @@
         </div>
 
         <span>
-          {{message}}
+          {{{message}}}
         </span>
       </div>
     </div>

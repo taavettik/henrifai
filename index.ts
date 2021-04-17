@@ -1,10 +1,10 @@
 import htmlToImage from 'node-html-to-image';
 import { promises as fs } from 'fs';
-import { SlackAdapter } from 'botbuilder-adapter-slack';
-import { Botkit } from 'botkit';
-import { App, SlackCommandMiddlewareArgs } from '@slack/bolt';
+import { AllMiddlewareArgs, App, SlackCommandMiddlewareArgs } from '@slack/bolt';
 import { upload } from './imgur';
 import { config } from './config';
+
+type WebClient = AllMiddlewareArgs['client'];
 
 class Henrifai {
   template?: string;
@@ -18,7 +18,38 @@ class Henrifai {
     this.template = await fs.readFile('./template.html', 'utf8');
   }
 
-  async generate(cmd: SlackCommandMiddlewareArgs, text: string) {
+  async fetchEmojis(client: WebClient) {
+    const emojis = await client.emoji.list();
+
+    if (!('emoji' in emojis)) {
+      throw new Error(`Fetching emojis failed`)
+    }
+    this.emojis = emojis.emoji as Record<string, string>;
+  }
+
+  parseMessage(text: string) {
+    const blocks = text.split(/(:.*?:)/g);
+    const parsed = blocks.reduce((str, block) => {
+      const emoji = block.match(/:(.*?):/)?.[1];
+      if (!emoji) {
+        return `${str}${block}`;
+      }
+      const url = this.emojis?.[emoji];
+      if (!url) {
+        return `${str}${block}`;
+      }
+      const html = `<img class="emoji" src="${url}" />`;
+      return `${str}${html}`;
+    }, '');
+
+    return parsed;
+  }
+
+  async generate(client: WebClient, text: string) {
+    if (!this.emojis) {
+      await this.fetchEmojis(client);
+    }
+    
     if (!this.template) {
       return undefined;
     }
@@ -26,7 +57,7 @@ class Henrifai {
     return htmlToImage({
       html: this.template,
       content: {
-        message: text
+        message: this.parseMessage(text),
       },
     }) as Promise<Buffer>;
   }
@@ -59,7 +90,7 @@ app.command('/henrifai', async (cmd) => {
       return;
     }
 
-    const img = await henrifai.generate(cmd, text);
+    const img = await henrifai.generate(cmd.client, text);
 
     if (!img) {
       return;
