@@ -1,0 +1,119 @@
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+
+    <style>
+      * {
+        font-family: 'Open Sans', sans-serif;
+      }
+
+      body {
+        width: fit-content;
+        height: fit-content;
+        position: relative;
+        transform: scale(2) translate(25%, 25%);
+      }
+
+      .bubble-mask {
+        position: absolute;
+        clip-path: ellipse(50% 35% at 50% 74%);
+        bottom: -2px;
+        left: -50px;
+        width: 50px;
+        height: 50px;
+        z-index: 10;
+      }
+
+      .bubble-arrow {
+        position: absolute;
+        width: 50px;
+        bottom: -2px;
+        left: -20px;
+        height: 10px;
+        background-color: white;
+        z-index: 1;
+        border-bottom: 2px solid #00000044;
+      }
+
+      .bubble {
+        position: absolute;
+        bottom: 10px;
+        left: 75px;
+        background-color: white;
+        border-radius: 8px;
+        padding: 8px;
+        border-bottom: 2px solid #00000044;
+        margin-right: 32px;
+      }
+
+      .screen {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 838px;
+        width: 472px;
+        background-image: url('https://cutewallpaper.org/21/telegram-wallpaper/7-Best-Iphone-wallpapers-images-Iphone-wallpaper-.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      .avatar {
+        border-radius: 50%;
+        width: 50px;
+        position: absolute;
+        left: -60px;
+        z-index: 20;
+        bottom: -2px;
+      }
+
+      .name {
+        color: #58A7A1;
+        font-weight: 600;
+        font-size: 0.9em;
+        margin-bottom: 2px;
+      }
+
+      .placeholder {
+        padding: 30px 50px;
+        max-width: 365px;
+        min-width: 120px;
+      }
+
+      .emoji {
+        height: 22px;
+        position: relative;
+        bottom: -4px;
+      }
+    </style>
+  </head>
+
+
+  <body>
+    <div class="placeholder">
+      <span>
+        {{message}}
+      </span>
+    </div>
+
+    <div class="screen">
+      <div class="bubble">
+        <img class="avatar" src="https://ca.slack-edge.com/T02S25CV8-UB0TFGMEW-eeabfcc3c3d9-512">
+
+        <div class="bubble-mask">
+          <img src="https://cutewallpaper.org/21/telegram-wallpaper/7-Best-Iphone-wallpapers-images-Iphone-wallpaper-.jpg" />
+        </div>
+
+        <div class="bubble-arrow"></div>
+
+        <div class="name">
+          Henri Thor-Touch
+        </div>
+
+        <span>
+          {{message}}
+        </span>
+      </div>
+    </div>
+  </body>
+</html>
