@@ -173,7 +173,9 @@ const app = new App({
 
 app.command('/henrifai', async (cmd) => {
   try {
-    cmd.ack();
+    cmd.ack({
+      response_type: 'in_channel',
+    });
 
     const text = cmd.body.text;
 
