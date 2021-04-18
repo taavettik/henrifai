@@ -1,4 +1,4 @@
-import secrets from './secrets.json';
+import secrets from '../secrets.json';
 
 export const config = {
   botToken: secrets.BOT_TOKEN,
