@@ -99,14 +99,18 @@ class Henrifai {
     return parsed;
   }
 
-  generateHtml(message: string) {
+  async generateHtml(message: string, clean = false) {
+    if (!this.template || clean) {
+      await this.init();
+    }
+
     if (!this.template) {
-      return;
+      throw new Error('this should never happen');
     }
 
     const render = hbs.compile(this.template);
 
-    return render({ message });
+    return render({ message, time: formatTime(new Date()) });
   }
 
   async generate(senderUsername: string, text: string, client?: WebClient) {
@@ -146,7 +150,7 @@ server.get(`/`, async (req, res) => {
 server.get('/html', async (req, res) => {
   const { message } = req.query;
 
-  const html = henrifai.generateHtml(`${message}`);
+  const html = await henrifai.generateHtml(`${message}`, true);
 
   res.send(html ?? '');
 });
