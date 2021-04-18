@@ -173,7 +173,9 @@ const app = new App({
 
 app.command('/henrifai', async (cmd) => {
   try {
-    cmd.ack();
+    cmd.ack({
+      response_type: 'in_channel',
+    });
 
     const text = cmd.body.text;
 
@@ -200,13 +202,6 @@ app.command('/henrifai', async (cmd) => {
       text: link,
       unfurl_links: true,
       unfurl_media: true,
-      attachments: [
-        {
-          text: '',
-          image_url: link,
-          thumb_url: link,
-        },
-      ],
     });
   } catch (e) {
     console.error(e);
