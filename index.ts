@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import { AllMiddlewareArgs, App, SlackCommandMiddlewareArgs } from '@slack/bolt';
 import { upload } from './imgur';
 import { config } from './config';
+import crypto from 'crypto';
 import axios from 'axios';
 
 const EMOJI_JSON_URL = 'https://raw.githubusercontent.com/iamcal/emoji-data/master/emoji.json';
@@ -26,6 +27,12 @@ function usernameToColor(username: string) {
     color += hex;
   }
   return `#${color.padStart(6, '0')}`;
+}
+
+function hashUsername(username: string) {
+  const hash = crypto.createHash('sha1');
+  hash.update(username);
+  return hash.digest('hex');
 }
 
 class Henrifai {
@@ -140,7 +147,7 @@ app.command('/henrifai', async (cmd) => {
       return;
     }
 
-    const link = await upload(img.toString('base64'));
+    const link = await upload(img.toString('base64'), hashUsername(cmd.command.user_name));
     await cmd.respond({
       text: link,
       unfurl_links: true,

@@ -8,9 +8,10 @@ const api = axios.create({
   }
 });
 
-export async function upload(base64: string) {
+export async function upload(base64: string, title?: string) {
   const res = await api.post('/upload', {
     image: base64,
+    title,
     type: 'base64',
   });
 
