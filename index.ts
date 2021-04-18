@@ -1,22 +1,30 @@
 import htmlToImage from 'node-html-to-image';
 import { promises as fs } from 'fs';
-import { AllMiddlewareArgs, App, SlackCommandMiddlewareArgs } from '@slack/bolt';
+import {
+  AllMiddlewareArgs,
+  App,
+  SlackCommandMiddlewareArgs,
+} from '@slack/bolt';
 import { upload } from './imgur';
 import { config } from './config';
 import crypto from 'crypto';
 import axios from 'axios';
 
-const EMOJI_JSON_URL = 'https://raw.githubusercontent.com/iamcal/emoji-data/master/emoji.json';
+const EMOJI_JSON_URL =
+  'https://raw.githubusercontent.com/iamcal/emoji-data/master/emoji.json';
 
 type WebClient = AllMiddlewareArgs['client'];
 
 function formatTime(date: Date) {
-  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+  return `${date
+    .getHours()
+    .toString()
+    .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 }
 
 function usernameToColor(username: string) {
   const lastName = username.split('.').slice(-1)[0] ?? '';
-  
+
   let color = '';
   for (let i = 0; i < 3; i++) {
     const code = lastName.charCodeAt(i);
@@ -57,7 +65,7 @@ class Henrifai {
 
       return {
         ...obj,
-        [cur.short_name]: parts.map(part => `&#x${part}`).join(''),
+        [cur.short_name]: parts.map((part) => `&#x${part}`).join(''),
       };
     }, {} as Record<string, string>);
     this.defaultEmojis = emojis;
@@ -67,7 +75,7 @@ class Henrifai {
     const emojis = await client.emoji.list();
 
     if (!('emoji' in emojis)) {
-      throw new Error(`Fetching emojis failed`)
+      throw new Error(`Fetching emojis failed`);
     }
     this.emojis = emojis.emoji as Record<string, string>;
   }
@@ -96,7 +104,7 @@ class Henrifai {
     if (!this.emojis) {
       await this.fetchEmojis(client);
     }
-    
+
     if (!this.template) {
       return undefined;
     }
@@ -141,25 +149,33 @@ app.command('/henrifai', async (cmd) => {
       return;
     }
 
-    const img = await henrifai.generate(cmd.client, cmd.command.user_name, text);
+    const img = await henrifai.generate(
+      cmd.client,
+      cmd.command.user_name,
+      text
+    );
 
     if (!img) {
       return;
     }
 
-    const link = await upload(img.toString('base64'), hashUsername(cmd.command.user_name));
+    const link = await upload(
+      img.toString('base64'),
+      hashUsername(cmd.command.user_name)
+    );
     await cmd.respond({
       text: link,
       unfurl_links: true,
       unfurl_media: true,
-      attachments: [{
-        text: '',
-        image_url: link,
-        thumb_url: link
-      }]
+      attachments: [
+        {
+          text: '',
+          image_url: link,
+          thumb_url: link,
+        },
+      ],
     });
   } catch (e) {
     console.error(e);
   }
-})
-
+});
