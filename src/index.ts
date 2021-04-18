@@ -10,6 +10,7 @@ import { config } from './config';
 import crypto from 'crypto';
 import express from 'express';
 import axios from 'axios';
+import hbs from 'handlebars';
 
 type WebClient = AllMiddlewareArgs['client'];
 
@@ -98,6 +99,16 @@ class Henrifai {
     return parsed;
   }
 
+  generateHtml(message: string) {
+    if (!this.template) {
+      return;
+    }
+
+    const render = hbs.compile(this.template);
+
+    return render({ message });
+  }
+
   async generate(senderUsername: string, text: string, client?: WebClient) {
     if (!this.emojis && client) {
       await this.fetchEmojis(client);
@@ -130,6 +141,14 @@ server.get(`/`, async (req, res) => {
   const img = await henrifai.generate('dev', `${message}`);
   res.contentType('image/png');
   res.send(img);
+});
+
+server.get('/html', async (req, res) => {
+  const { message } = req.query;
+
+  const html = henrifai.generateHtml(`${message}`);
+
+  res.send(html ?? '');
 });
 
 server.listen(3000);
