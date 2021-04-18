@@ -3,6 +3,9 @@ import { promises as fs } from 'fs';
 import { AllMiddlewareArgs, App, SlackCommandMiddlewareArgs } from '@slack/bolt';
 import { upload } from './imgur';
 import { config } from './config';
+import axios from 'axios';
+
+const EMOJI_JSON_URL = 'https://raw.githubusercontent.com/iamcal/emoji-data/master/emoji.json';
 
 type WebClient = AllMiddlewareArgs['client'];
 
@@ -13,6 +16,7 @@ function formatTime(date: Date) {
 class Henrifai {
   template?: string;
   emojis?: Record<string, string>;
+  defaultEmojis: Record<string, string> = {};
 
   constructor() {
     this.init();
@@ -20,6 +24,21 @@ class Henrifai {
 
   async init() {
     this.template = await fs.readFile('./template.html', 'utf8');
+    await this.fetchDefaultEmojis();
+  }
+
+  async fetchDefaultEmojis() {
+    const res = await axios.get(EMOJI_JSON_URL);
+    const emojis = (res.data as any[]).reduce((obj, cur) => {
+      // some emojis are constisted of more than one characters
+      const parts = cur.unified.split('-') as string[];
+
+      return {
+        ...obj,
+        [cur.short_name]: parts.map(part => `&#x${part}`).join(''),
+      };
+    }, {} as Record<string, string>);
+    this.defaultEmojis = emojis;
   }
 
   async fetchEmojis(client: WebClient) {
@@ -38,13 +57,14 @@ class Henrifai {
       if (!emoji) {
         return `${str}${block}`;
       }
+      const emojiChar = this.defaultEmojis[emoji];
       const url = this.emojis?.[emoji];
-      if (!url) {
+      if (!url && !emojiChar) {
         return `${str}${block}`;
       }
       // this is a span to make teemu angry
       const html = `<span class="emoji" style="background-image: url(${url})"></span>`;
-      return `${str}${html}`;
+      return `${str}${emojiChar ? emojiChar : html}`;
     }, '');
 
     return parsed;

@@ -43,7 +43,7 @@
         left: 75px;
         background-color: white;
         border-radius: 8px;
-        padding: 8px 8px 10px 8px;
+        padding: 8px 8px 2px 8px;
         border-bottom: 2px solid #00000044;
         margin-right: 32px;
       }
@@ -94,11 +94,18 @@
       }
 
       .msg-container {
-        height: 25px;
+        display: flex;
+      }
+
+      .msg {
+        min-height: 25px;
+        padding-bottom: 6px;
+        padding-right: 4px;
+        min-width: 80px;
       }
 
       .time {
-        position: absolute;
+        align-self: flex-end;
         font-size: 10px;
         color: #A0A4A7;
         right: 8px;
@@ -112,7 +119,7 @@
   <body>
     <div class="placeholder">
       <span>
-        {{{message}}}
+        {{{message}}}{{{time}}}
       </span>
     </div>
 
@@ -131,13 +138,15 @@
         </div>
 
         <div class="msg-container">
-          <span>
-            {{{message}}}
-          </span>
-        </div>
+          <div class="msg">
+            <span>
+              {{{message}}}
+            </span>
+          </div>
 
-        <div class="time">
-          {{{time}}}
+          <div class="time">
+            {{{time}}}
+          </div>
         </div>
       </div>
     </div>
