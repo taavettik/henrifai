@@ -173,9 +173,7 @@ const app = new App({
 
 app.command('/henrifai', async (cmd) => {
   try {
-    cmd.ack({
-      response_type: 'in_channel',
-    });
+    cmd.ack();
 
     const text = cmd.body.text;
 
@@ -198,6 +196,7 @@ app.command('/henrifai', async (cmd) => {
       hashUsername(cmd.command.user_name)
     );
     await cmd.respond({
+      response_type: 'in_channel',
       text: link,
       unfurl_links: true,
       unfurl_media: true,
