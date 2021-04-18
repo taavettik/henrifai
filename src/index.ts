@@ -8,6 +8,7 @@ import {
 import { upload } from './imgur';
 import { config } from './config';
 import crypto from 'crypto';
+import express from 'express';
 import axios from 'axios';
 
 type WebClient = AllMiddlewareArgs['client'];
@@ -97,8 +98,8 @@ class Henrifai {
     return parsed;
   }
 
-  async generate(client: WebClient, senderUsername: string, text: string) {
-    if (!this.emojis) {
+  async generate(senderUsername: string, text: string, client?: WebClient) {
+    if (!this.emojis && client) {
       await this.fetchEmojis(client);
     }
 
@@ -119,6 +120,20 @@ class Henrifai {
   }
 }
 
+const henrifai = new Henrifai();
+
+const server = express();
+
+server.get(`/`, async (req, res) => {
+  const { message } = req.query;
+
+  const img = await henrifai.generate('dev', `${message}`);
+  res.contentType('image/png');
+  res.send(img);
+});
+
+server.listen(3000);
+
 const app = new App({
   token: config.botToken,
   appToken: config.appToken,
@@ -128,12 +143,10 @@ const app = new App({
 
 (async () => {
   // Start your app
-  await app.start(3000);
+  await app.start();
 
   console.log('⚡️ Bolt app is running!');
 })();
-
-const henrifai = new Henrifai();
 
 app.command('/henrifai', async (cmd) => {
   try {
@@ -146,9 +159,9 @@ app.command('/henrifai', async (cmd) => {
     }
 
     const img = await henrifai.generate(
-      cmd.client,
       cmd.command.user_name,
-      text
+      text,
+      cmd.client
     );
 
     if (!img) {
