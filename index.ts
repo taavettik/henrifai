@@ -6,6 +6,10 @@ import { config } from './config';
 
 type WebClient = AllMiddlewareArgs['client'];
 
+function formatTime(date: Date) {
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+}
+
 class Henrifai {
   template?: string;
   emojis?: Record<string, string>;
@@ -38,7 +42,8 @@ class Henrifai {
       if (!url) {
         return `${str}${block}`;
       }
-      const html = `<img class="emoji" src="${url}" />`;
+      // this is a span to make teemu angry
+      const html = `<span class="emoji" style="background-image: url(${url})"></span>`;
       return `${str}${html}`;
     }, '');
 
@@ -54,10 +59,13 @@ class Henrifai {
       return undefined;
     }
 
+    const now = new Date();
+
     return htmlToImage({
       html: this.template,
       content: {
         message: this.parseMessage(text),
+        time: formatTime(now)
       },
     }) as Promise<Buffer>;
   }

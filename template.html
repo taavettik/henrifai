@@ -2,6 +2,7 @@
   <head>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Telex&display=swap" rel="stylesheet">
 
     <style>
       * {
@@ -29,7 +30,7 @@
         position: absolute;
         width: 50px;
         bottom: -2px;
-        left: -20px;
+        left: -45px;
         height: 10px;
         background-color: white;
         z-index: 1;
@@ -42,7 +43,7 @@
         left: 75px;
         background-color: white;
         border-radius: 8px;
-        padding: 8px;
+        padding: 8px 8px 10px 8px;
         border-bottom: 2px solid #00000044;
         margin-right: 32px;
       }
@@ -72,6 +73,7 @@
         font-weight: 600;
         font-size: 0.9em;
         margin-bottom: 2px;
+        font-family: 'Open Sans', sans-serif;
       }
 
       .placeholder {
@@ -82,10 +84,26 @@
       }
 
       .emoji {
-        height: 22px;
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        display: inline-block;
         position: relative;
-        bottom: -5px;
+        bottom: -4px;
         z-index: 5;
+      }
+
+      .msg-container {
+        height: 25px;
+      }
+
+      .time {
+        position: absolute;
+        font-size: 10px;
+        color: #A0A4A7;
+        right: 8px;
+        bottom: 2px;
+        text-shadow: 0px 0px 0.1px #a0a4a7;
       }
     </style>
   </head>
@@ -112,9 +130,15 @@
           Henri Thor-Touch
         </div>
 
-        <span>
-          {{{message}}}
-        </span>
+        <div class="msg-container">
+          <span>
+            {{{message}}}
+          </span>
+        </div>
+
+        <div class="time">
+          {{{time}}}
+        </div>
       </div>
     </div>
   </body>
