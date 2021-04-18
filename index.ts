@@ -13,6 +13,21 @@ function formatTime(date: Date) {
   return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 }
 
+function usernameToColor(username: string) {
+  const lastName = username.split('.').slice(-1)[0] ?? '';
+  
+  let color = '';
+  for (let i = 0; i < 3; i++) {
+    const code = lastName.charCodeAt(i);
+    if (Number.isNaN(code)) {
+      continue;
+    }
+    const hex = code.toString(16).padStart(2, '0');
+    color += hex;
+  }
+  return `#${color.padStart(6, '0')}`;
+}
+
 class Henrifai {
   template?: string;
   emojis?: Record<string, string>;
@@ -70,7 +85,7 @@ class Henrifai {
     return parsed;
   }
 
-  async generate(client: WebClient, text: string) {
+  async generate(client: WebClient, senderUsername: string, text: string) {
     if (!this.emojis) {
       await this.fetchEmojis(client);
     }
@@ -85,7 +100,8 @@ class Henrifai {
       html: this.template,
       content: {
         message: this.parseMessage(text),
-        time: formatTime(now)
+        time: formatTime(now),
+        watermarkColor: usernameToColor(senderUsername),
       },
     }) as Promise<Buffer>;
   }
@@ -118,7 +134,7 @@ app.command('/henrifai', async (cmd) => {
       return;
     }
 
-    const img = await henrifai.generate(cmd.client, text);
+    const img = await henrifai.generate(cmd.client, cmd.command.user_name, text);
 
     if (!img) {
       return;
