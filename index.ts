@@ -10,9 +10,6 @@ import { config } from './config';
 import crypto from 'crypto';
 import axios from 'axios';
 
-const EMOJI_JSON_URL =
-  'https://raw.githubusercontent.com/iamcal/emoji-data/master/emoji.json';
-
 type WebClient = AllMiddlewareArgs['client'];
 
 function formatTime(date: Date) {
@@ -58,7 +55,7 @@ class Henrifai {
   }
 
   async fetchDefaultEmojis() {
-    const res = await axios.get(EMOJI_JSON_URL);
+    const res = await axios.get(config.emojiJsonUrl);
     const emojis = (res.data as any[]).reduce((obj, cur) => {
       // some emojis are constisted of more than one characters
       const parts = cur.unified.split('-') as string[];
@@ -143,7 +140,6 @@ app.command('/henrifai', async (cmd) => {
     cmd.ack();
 
     const text = cmd.body.text;
-    const emojis = await cmd.client.emoji.list();
 
     if (!text) {
       return;
