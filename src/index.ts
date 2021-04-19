@@ -11,6 +11,7 @@ import crypto from 'crypto';
 import express from 'express';
 import axios from 'axios';
 import hbs from 'handlebars';
+import { escape } from 'html-escaper';
 
 type WebClient = AllMiddlewareArgs['client'];
 
@@ -127,7 +128,8 @@ class Henrifai {
     return htmlToImage({
       html: this.template,
       content: {
-        message: this.parseMessage(text),
+        // todo: :)
+        message: this.parseMessage(escape(text)),
         time: formatTime(now),
         watermarkColor: usernameToColor(senderUsername),
       },
