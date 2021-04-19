@@ -123,7 +123,10 @@ class Henrifai {
       return undefined;
     }
 
+    // todo: use luxon or something idk
+    // maybe also make the timezone be correct one
     const now = new Date();
+    now.setHours(now.getHours() + 1);
 
     return htmlToImage({
       html: this.template,
